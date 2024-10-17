@@ -13,14 +13,14 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
-from homeassistant.const import DEGREE, EntityCategory
+from homeassistant.const import DEGREE, EntityCategory, UnitOfTime
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 
-from .const import DOMAIN, SIGNAL_EVENTS_CHANGED, SIGNAL_POSITION_CHANGED
+from .const import DOMAIN, SIGNAL_EVENTS_CHANGED, SIGNAL_POSITION_CHANGED, SIGNAL_DURATIONS_CHANGED
 from .entity import Sun, SunConfigEntry
 
 ENTITY_ID_SENSOR_FORMAT = SENSOR_DOMAIN + ".sun_{}"
@@ -101,6 +101,50 @@ SENSOR_TYPES: tuple[SunSensorEntityDescription, ...] = (
         value_fn=lambda data: data.rising,
         entity_registry_enabled_default=False,
         signal=SIGNAL_EVENTS_CHANGED,
+    ),
+    SunSensorEntityDescription(
+        key="daylight_duration",
+        device_class=SensorDeviceClass.DURATION,
+        translation_key="daylight_duration",
+        icon="mdi:weather-sunny",
+        state_class=SensorStateClass.TOTAL,
+        value_fn=lambda data: data.daylight_duration.total_seconds(),
+        entity_registry_enabled_default=False,
+        native_unit_of_measurement=UnitOfTime.SECONDS,
+        signal=SIGNAL_DURATIONS_CHANGED,
+    ),
+    SunSensorEntityDescription(
+        key="night_duration",
+        device_class=SensorDeviceClass.DURATION,
+        translation_key="night_duration",
+        icon="mdi:weather-night",
+        state_class=SensorStateClass.TOTAL,
+        value_fn=lambda data: data.night_duration.total_seconds(),
+        entity_registry_enabled_default=False,
+        native_unit_of_measurement=UnitOfTime.SECONDS,
+        signal=SIGNAL_DURATIONS_CHANGED,
+    ),
+    SunSensorEntityDescription(
+        key="twilight_sunrise_duration",
+        device_class=SensorDeviceClass.DURATION,
+        translation_key="twilight_sunrise_duration",
+        icon="mdi:weather-sunset-up",
+        state_class=SensorStateClass.TOTAL,
+        value_fn=lambda data: data.twilight_sunrise_duration.total_seconds(),
+        entity_registry_enabled_default=False,
+        native_unit_of_measurement=UnitOfTime.SECONDS,
+        signal=SIGNAL_DURATIONS_CHANGED,
+    ),
+    SunSensorEntityDescription(
+        key="twilight_sunset_duration",
+        device_class=SensorDeviceClass.DURATION,
+        translation_key="twilight_sunset_duration",
+        icon="mdi:weather-sunset-down",
+        state_class=SensorStateClass.TOTAL,
+        value_fn=lambda data: data.twilight_sunset_duration.total_seconds(),
+        entity_registry_enabled_default=False,
+        native_unit_of_measurement=UnitOfTime.SECONDS,
+        signal=SIGNAL_DURATIONS_CHANGED,
     ),
 )
 
